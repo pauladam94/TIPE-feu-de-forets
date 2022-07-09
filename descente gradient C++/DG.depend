@@ -1,0 +1,101 @@
+# depslib dependency file v1.0
+1618247578 source:c:\users\polad\onedrive\tipe\c++\dg\dg\main.cpp
+	<string>
+	<iostream>
+	<cmath>
+	"math.h"
+
+1618246220 c:\users\polad\onedrive\tipe\c++\dg\dg\math.h
+	<string.h>
+
+1618246514 source:c:\users\polad\onedrive\tipe\c++\dg\dg\math.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+
+1618233147 c:\users\polad\onedrive\tipe\c++\dg\dg\main.cpp
+	<string>
+	<iostream>
+	<cmath>
+	"math.h"
+
+1643294026 source:c:\users\polad\onedrive\tipe\c++\dg\main.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+	"math.h"
+
+1642686519 c:\users\polad\onedrive\tipe\c++\dg\math.h
+	<string.h>
+
+1643294791 source:c:\users\polad\onedrive\tipe\c++\dg\math.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+
+1642688556 source:c:\users\pc-gamer\onedrive\tipe\c++\dg\main.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+	"math.h"
+
+1642686519 c:\users\pc-gamer\onedrive\tipe\c++\dg\math.h
+	<string.h>
+
+1618325154 source:c:\users\nous\onedrive\tipe\c++\dg\main.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<string.h>
+	"math.h"
+
+1618317633 c:\users\nous\onedrive\tipe\c++\dg\math.h
+	<string.h>
+
+1618325087 source:c:\users\nous\onedrive\tipe\c++\dg\math.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+
+1642686463 source:c:\users\pc-gamer\onedrive\tipe\c++\dg\math.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+
+1642686500 source:c:\users\mathi\onedrive\tipe\c++\dg\main.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+	"math.h"
+
+1642686519 c:\users\mathi\onedrive\tipe\c++\dg\math.h
+	<string.h>
+
+1642686463 source:c:\users\mathi\onedrive\tipe\c++\dg\math.cpp
+	<string>
+	<iostream>
+	<cmath>
+	<fstream>
+	<random>
+	<string.h>
+

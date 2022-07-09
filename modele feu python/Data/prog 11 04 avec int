@@ -1,0 +1,398 @@
+#include <string>
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <time.h>
+#include "math.h"
+using namespace std;
+
+
+// DEFINITIONS VARIABLES
+
+string favant("C:/Users/polad/OneDrive/TIPE/python/foretavant.txt");
+string fbrulee("C:/Users/polad/OneDrive/TIPE/python/foretbrulee.txt");
+
+//string favant("C:/Users/Pc-gamer/OneDrive/TIPE/python/foretavant.txt");
+//string fbrulee("C:/Users/Pc-gamer/OneDrive/TIPE/python/foretbrulee.txt");
+
+int const l(300),h(329);
+int terre[l][h];
+int nvterre[l][h];
+int foretbrulee[l][h];
+bool A(true);
+double const regl(1);
+double rule[6] = {regl, regl, regl, regl, regl, regl};
+int compt(0);
+
+
+int main()
+{
+cout<<"salut"<<endl;
+srand((unsigned int)time(0));
+
+
+//cout<<rand()%100<<endl;
+
+
+// BATTERIE TESTS /
+//cout<<nvterre[4][20]<<endl; // doit renvoyer 3
+//cout<<nvterre[1][1]<<endl; // doit renvoyer 1
+//cout<<nvterre<<endl;
+/*
+int i,j;
+for (j=326; j>=0 ; j--){
+for (i=0; i<300; i++){
+cout<<nvterre[i][j] ;
+}cout<<";"<<endl;}
+*/
+
+
+// on crée les deux listes par lecture des
+// fichiers textes
+creat_list(favant,nvterre,l,h); // i=300 , j=329
+creat_list(fbrulee,foretbrulee,l,h);
+cout<<"done compilating data"<<endl;
+
+// affichage de la norme de départ
+cout<< "norme avant calcul : "<<norme(nvterre,foretbrulee,l,h)<<endl;
+
+// DEMARRAGE DU FEU :
+
+nvterre[150][109] = 7;
+nvterre[150][110] = 7;
+nvterre[150][111] = 7;
+nvterre[150][112] = 7;
+nvterre[150][113] = 7;
+nvterre[148][111] = 7;
+nvterre[149][111] = 7;
+nvterre[151][111] = 7;
+nvterre[152][111] = 7;
+
+
+// on met nvterre à jour par rapport à foret avant
+egalite(terre,nvterre,l,h);
+cout<<"done mise a egalite"<<endl;
+
+// ouverture potentiel d'un fichier
+srand((unsigned int)time(0));
+while (A)
+// la boucle va s'arreter par elle même si la valeur de A
+// est changé par la fonction gen
+{
+    // Génération
+    // qui modifie nvterre en fonction de terre
+    //cout<<"démarrage première génération";
+    A = gen( terre, nvterre, l, h, rule);
+
+    // terre = nvterre
+    egalite(terre, nvterre, l, h);
+
+    compt++;
+
+    // Ecriture dans le fichier
+}
+cout<< compt <<" tours de gen done"<<endl;
+cout<<"norme finale de "<< norme(nvterre, foretbrulee, l ,h)<<endl;
+
+
+return norme(nvterre, foretbrulee, l, h) ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <string>
+#include <iostream>
+#include <cmath>
+#include <fstream>
+#include <stdlib.h>
+#include <time.h>
+/*
+#include <stdlib.h>
+#include <time.h>
+*/
+//#include "math.h"
+using namespace std;
+
+//Cadrillage utilisé pour les générations
+//		{-2, 2},{-1, 2},{ 0, 2},{ 1, 2},{ 2, 2},
+//		{-2, 1},{-1, 1},{ 0, 1},{ 1, 1},{ 2, 1},
+//      {-2, 0},{-1, 0},{ 0, 0},{ 1, 0},{ 2, 0},
+//      {-2,-1},{-1,-1},{ 0,-1},{ 1,-1},{ 2,-1},
+//      {-2,-2},{-1,-2},{ 0,-2},{ 1,-2},{ 2,-2},
+
+// INITIALISATION VARIABLES
+int b2[10][2] = {{-2,-2},{-2,-1},{-1,-2},{-1,-1},{ 0,-2},{ 0,-1},{ 1,-2},{ 1,-1},{ 2,-2},{ 2,-1}};
+int h2[10][2] = {{-2, 1},{-2, 2},{-1, 1},{-1, 2},{ 0, 1},{ 0, 2},{ 1, 1},{ 1, 2},{ 2, 1},{ 2, 2}};
+int g2[10][2] = {{-2,-2},{-2,-1},{-2, 0},{-2, 1},{-2, 2},{-1,-2},{-1,-1},{-1, 0},{-1, 1},{-1, 2}};
+int d2[10][2] = {{ 1,-2},{ 1,-1},{ 1, 0},{ 1, 1},{ 1, 2},{ 2,-2},{ 2,-1},{ 2, 0},{ 2, 1},{ 2, 2}};
+int ord1[8][2] = {{-1,-1},{-1,0},{-1,1},{0,1},{1,1},{1,0},{1,-1},{0,-1}};
+int ord2[16][2] = {{-2,-2},{-2,-1},{-2,0},{-2,1},{-2,2},{-1,2},{0,2},{1,2},{2,2},{2,1},{2,0},{2,-1},{2,-2},{1,-2},{0,-2},{-1,-2}};
+int adj[4][2] = {{-1,0},{1,0},{0,-1},{0,1}};
+int cx[9][2] = {{0,0},{-1,0},{1,0},{0,-1},{0,1},{0, 2},{-2, 0},{ 0,-2},{ 2, 0}};
+
+
+//lecture dans un fichier
+// création d'un matrice 2D qui lit le fichier texte
+void creat_list(string nom_fichier_txt,int tabl[][329],int const largi, int const hautj)
+{
+int j(hautj),i(0),long_str(599);
+ifstream fichier(nom_fichier_txt);//, ios::in
+if(fichier)
+    {
+    string ligne; //var pour stocker les lignes
+    //int cpt(0);
+    while(getline(fichier, ligne)) //jusqu'à la dernière ligne on lit
+        {
+
+        //cpt++;
+        //cout<<" cpt="<<cpt<<" ";
+        //long_str = ligne.size();
+        //cout<<long_str;
+
+        j--;
+        i=0;
+        // analyse de la ligne récupéré
+        // à écrire sur le tableau(en ième ligne)
+        for (int ip = 0; ip < long_str ; ip++)//fin avant (long_str-1)
+            {
+            //cout<<ligne[i];
+            //if (i == 6){cout<<ligne[i]<<endl;}
+
+            if (ligne[ip] != ',' and ligne[ip] != '\n' and ligne[ip]!=' ')
+                {
+                //cout<<ligne[ip];
+
+                if ((int)ligne[ip]==0) {tabl[i][j] = 0;}
+                else {tabl[i][j] = (int)ligne[ip]-48;}//(int) convertit le code ASCII
+                i++;
+                }
+            }
+        }
+    }
+else
+    {
+    cout << "ERREUR: Impossible d'ouvrir le fichier "<< nom_fichier_txt <<" en lecture." << endl;
+    }
+fichier.close();
+}
+
+// test d'égalité entre deux matrices 2D
+bool testegalite(int terre[][329],int nvterre[][329],int const largi, int const hautj)
+{
+bool C(true);
+for (int j=hautj; j>=0 ; j--)
+{
+    for (int i=0; i<largi; i++)
+    {
+        if (terre[i][j]!=nvterre[i][j]){C = false;}
+    }
+}
+if (C==true) {cout<<"finish"<<endl;}
+return C;
+}
+
+
+// permet de compter les cases autour d'une case (i,j)
+void searcharound(int i, int j, int terre[][329],int arbre[], bool remiseazero, int around[][2],int taille)
+{
+    // on remet à zero arbre si c'est demandé
+    if (remiseazero) {for(int k=0; k<8; k++){arbre[k]=0;}}
+    for(int k=0; k<taille; k++)
+    {
+        arbre[ terre[ i+around[k][0] ][ j+around[k][1] ] ] +=1;
+    }
+}
+
+// GENERATION :
+// fonction qui met à jour en avancant d'une génération la matrice
+// 2D TERRE
+bool gen(int terre[][329],int nvterre[][329],int const largi, int const hautj, double rule[6])
+{
+srand((unsigned int)time(0));
+//initialise nouvelle terre par rapport à la terre
+//srand((unsigned int)time(0));
+double prec(10^4);
+bool TEST(true), B;
+int arbre[8];
+
+// def importante du nombre de feu limite
+// et du décalage possible pour l'ordre 1+2
+int nbfeu(5); // 5  -  6  -  7  -  8  (pour avoir la même proportion entre
+int dec(7);   // 3  - 3.6 - 4.2 - 4.8  ord1+ord2 et g2,b2,h2 et d2)
+// on actualise nvterre par rapport l'état de terre
+for (int j=hautj; j>=0 ; j--)
+{
+for (int i=0; i<largi; i++)
+{
+    if (terre[i][j] == 3)
+    {   //cout<<"hey je suis la"<<endl;
+        B = true;
+        //ordre 2 + ordre 1
+
+        searcharound(i, j, terre, arbre, true, ord1, 8);
+        //if (arbre[7]!=0){cout<<arbre[7]<<endl;}
+        searcharound(i, j, terre, arbre, false, ord2, 16);
+        //for a,b in ordre1 : arbre[terre[i+a][j+b]] += 1
+        //for a,b in ordre2 : arbre[terre[i+a][j+b]] += 1
+        if (arbre[4] + arbre[5] + arbre[6] + arbre[7] >= nbfeu+dec)
+        {
+            //double debug(rand()%(int)prec/prec);cout<<debug<<endl;
+            if (rand()%(int)prec/prec < rule[1]){nvterre[i][j] = 7;B = false;} }
+
+        //gauche
+        if (B)
+        {
+            searcharound(i, j, terre, arbre, true, g2, 10);
+            if (arbre[4] + arbre[5] + arbre[6] + arbre[7] >= nbfeu)
+            { if (rand()%(int)prec/prec < rule[2]){nvterre[i][j] = 7;B = false;} }
+        }
+        //droite
+        if (B)
+        {
+            searcharound(i, j, terre, arbre, true, d2, 10);
+            if (arbre[4] + arbre[5] + arbre[6] + arbre[7] >= nbfeu)
+            { if (rand()%(int)prec/prec < rule[3]) {nvterre[i][j] = 7; B= false;} }
+        }
+        //bas
+        if (B)
+        {
+            searcharound(i, j, terre, arbre, true, b2, 10);
+            if (arbre[4] + arbre[5] + arbre[6] + arbre[7] >= nbfeu)
+            {if (rand()%(int)prec/prec < rule[4]){nvterre[i][j] = 7; B = false;} }
+        }
+
+        //haut
+        if (B)
+        {
+            searcharound(i, j, terre, arbre, true, h2, 10);
+            if (arbre[4] + arbre[5] + arbre[6] + arbre[7] >= nbfeu)
+            { if (rand()%(int)prec/prec < rule[5]){nvterre[i][j] = 7; B = false;} }
+        }
+    }
+    // feu force 2 => feu force 1
+    if (terre[i][j] == 7) {nvterre[i][j] = 6;}
+    // feu force 1 => cendres force 2
+    if (terre[i][j] == 6) {nvterre[i][j] = 5;}
+    // cendre force 2 => cendre force 1
+    if (terre[i][j] == 5) {nvterre[i][j] = 4;}
+    // cendre force 1 => mur
+    if (terre[i][j] == 4) {nvterre[i][j] = 1;}
+    // test d'arrêt si la nouvelle matrice est égale
+    // à l'ancienne
+}
+}
+if (testegalite(terre,nvterre,300,329)) {TEST = false;}
+// fin total
+return TEST;
+}
+
+
+
+
+// EGALITE deux matrices 2D
+void egalite(int accepteur[][329],int donneur[][329],int const largi, int const hautj)
+{
+
+for (int j=hautj; j>=0 ; j--)
+{
+    for (int i=0; i<largi; i++)
+    {
+        accepteur[i][j]=donneur[i][j];
+    }
+}
+}
+
+// NORME :
+// Calcul norme euclidienne entre deux matrices 2D
+double norme(int list1[][329], int list2[][329], int const largi, int const hautj)
+{
+double s(0);
+for (int j=hautj; j>=0 ; j--)
+{
+    for (int i=0; i<largi; i++)
+    {
+        s+=(list1[i][j]-list2[i][j])^2;
+    }
+}
+return sqrt(s);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ifndef MATH_H_INCLUDED
+#define MATH_H_INCLUDED
+#include <string.h>
+
+void creat_list(std::string nom, int tabl[][329], int const largi, int const hautj);
+
+void searcharound(int i, int j, int terre[][329],int arbre[], bool remiseazero, int around[], int taille);
+
+bool gen(int terre[][329],int nvterre[][329],int const largi, int const hautj, double regle[6]);
+
+void egalite(int donneur[][329],int accepteur[][329],int const largi, int const hautj);
+
+double norme(int list1[][329], int list2[][329], int const largi, int const hautj);
+
+bool testegalite(int terre[][329],int nvterre[][329],int const largi,int const hautj);
+
+#endif // MATH_H_INCLUDED
